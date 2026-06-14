@@ -451,28 +451,17 @@ body {
     radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
     repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 21px);
   pointer-events: none;
-}
-
-.project-image-icon {
-  position: relative;
   z-index: 1;
-  opacity: 0.5;
-  transition: opacity 300ms ease, transform 300ms ease;
-}
-
-.project-card:hover .project-image-icon {
-  opacity: 0.8;
-  transform: scale(1.1);
 }
 
 .project-image-label {
   position: absolute;
   bottom: 0.75rem;
-  left: 1rem;
+  right: 1rem;
   font-family: 'Caveat', cursive;
   font-size: 0.9rem;
   color: rgba(255,255,255,0.6);
-  z-index: 1;
+  z-index: 5;
 }
 
 .project-image-badge {
@@ -487,8 +476,149 @@ body {
   font-family: 'JetBrains Mono', monospace;
   color: #fff;
   letter-spacing: 0.5px;
-  z-index: 2;
+  z-index: 5;
   border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ---- Mockup Browser (EventFlow) ---- */
+.mockup-browser {
+  position: relative;
+  z-index: 2;
+  width: 80%;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.3);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.mockup-browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  background: rgba(255,255,255,0.08);
+}
+
+.mockup-browser-bar span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+}
+
+.mockup-url {
+  margin-left: auto;
+  font-size: 0.55rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(255,255,255,0.4);
+}
+
+.mockup-browser-content {
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mockup-line {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255,255,255,0.12);
+  animation: mockupPulse 2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.3s);
+}
+
+.mockup-line-alt {
+  height: 14px;
+  width: 35%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, rgba(37,99,235,0.4), rgba(37,99,235,0.15));
+  animation: mockupPulse 2s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.3s);
+}
+
+@keyframes mockupPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* ---- Mockup Cityscape (Griha Dwar) ---- */
+.mockup-cityscape {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 80px;
+  opacity: 0.5;
+}
+
+.building {
+  background: rgba(255,255,255,0.15);
+  border-radius: 2px 2px 0 0;
+  transition: opacity 300ms ease;
+}
+
+.mockup-search-overlay {
+  position: relative;
+  z-index: 3;
+  margin-top: 8px;
+  width: 75%;
+}
+
+.mockup-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.4);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.mockup-search-bar span { opacity: 0.5; }
+
+/* ---- Mockup Network (TutoRoad) ---- */
+.mockup-network {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+}
+
+.network-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.network-node {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  border: 1.5px solid rgba(255,255,255,0.6);
+  z-index: 2;
+  animation: nodePulse 2.5s ease-in-out infinite;
+}
+
+.network-node:nth-child(1) { animation-delay: 0s; }
+.network-node:nth-child(2) { animation-delay: 0.5s; }
+.network-node:nth-child(3) { animation-delay: 1s; }
+.network-node:nth-child(4) { animation-delay: 1.5s; }
+.network-node:nth-child(5) { animation-delay: 2s; }
+
+@keyframes nodePulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.5); opacity: 1; }
 }
 
 .project-info {
