@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en" x-data="app()" :class="{ 'dark': isDark }">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dhruv Bhimani — Full-Stack Web Developer & ICT Engineering Student. Laravel, Livewire, PHP specialist.">
+  <title>Dhruv Bhimani — Full-Stack Developer</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Quicksand:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('contactForm', () => ({
+        form: { name: '', email: '', subject: '', message: '' },
+        submitting: false,
+        submitted: false,
+        submitForm() {
+          if (!this.form.name || !this.form.email || !this.form.subject || !this.form.message) return;
+          this.submitting = true;
+          setTimeout(() => {
+            this.submitting = false;
+            this.submitted = true;
+            this.form = { name: '', email: '', subject: '', message: '' };
+          }, 1500);
+        }
+      }));
+      Alpine.data('app', () => ({
+        scrolled: false,
+        mobileOpen: false,
+        isDark: false,
+        init() {
+          this.isDark = localStorage.getItem('theme') === 'dark' ||
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          this.$nextTick(() => this.applyTheme());
+          window.addEventListener('scroll', () => { this.scrolled = window.scrollY > 80; });
+        },
+        toggleDark() {
+          this.isDark = !this.isDark;
+          this.applyTheme();
+        },
+        applyTheme() {
+          if (this.isDark) {
+            document.documentElement.classList.add('dark');
+            localStorage.setItem('theme', 'dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.setItem('theme', 'light');
+          }
+        },
+        scrollToTop() {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }));
+    });
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='22' font-family='Caveat' font-weight='700' fill='%232563EB'>DB</text></svg>">
+</head>
+<body>
+
+  <!-- ===== LOADING SCREEN ===== -->
+  <div id="loader" class="loader">
+    <div class="loader-content">
+      <span class="loader-text font-['Caveat'] text-4xl text-[#2563EB]">Dhruv Bhimani</span>
+      <div class="loader-bar mt-4"><div class="loader-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ===== SCROLL PROGRESS ===== -->
+  <div id="scroll-progress" class="scroll-progress"></div>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav id="navbar"
+       class="fixed top-0 left-0 w-full z-50 transition-all duration-500"
+       :class="scrolled ? 'nav-scrolled shadow-lg' : ''">
+    <div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="#" class="text-2xl font-['Caveat'] font-bold text-[#2563EB] hover:text-[#1d4ed8] transition-colors no-underline">
+        Dhruv Bhimani
+      </a>
+
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#work" class="nav-link">Work</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#services" class="nav-link">Services</a>
+        <a href="#blog" class="nav-link">Thinking</a>
+        <a href="#contact" class="nav-link">Contact</a>
+        <button @click="toggleDark" class="theme-toggle" :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'">
+          <svg x-show="!isDark" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg x-show="isDark" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+      </div>
+
+      <div class="flex md:hidden items-center gap-3">
+        <button @click="toggleDark" class="theme-toggle">
+          <svg x-show="!isDark" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg x-show="isDark" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button @click="mobileOpen = !mobileOpen" class="text-[#3F3F46] dark:text-gray-300 p-1" aria-label="Toggle menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path x-show="!mobileOpen" d="M4 6h16M4 12h16M4 18h16"/>
+            <path x-show="mobileOpen" d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-overlay"
+         x-show="mobileOpen"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="mobileOpen = false">
+      <div class="flex flex-col items-center justify-center gap-8 h-full" @click.stop>
+        <a href="#work" class="text-3xl font-['Caveat'] hover:text-[#2563EB] transition-colors" @click="mobileOpen = false">Work</a>
+        <a href="#about" class="text-3xl font-['Caveat'] hover:text-[#2563EB] transition-colors" @click="mobileOpen = false">About</a>
+        <a href="#services" class="text-3xl font-['Caveat'] hover:text-[#2563EB] transition-colors" @click="mobileOpen = false">Services</a>
+        <a href="#blog" class="text-3xl font-['Caveat'] hover:text-[#2563EB] transition-colors" @click="mobileOpen = false">Thinking</a>
+        <a href="#contact" class="text-3xl font-['Caveat'] hover:text-[#2563EB] transition-colors" @click="mobileOpen = false">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section id="hero" class="hero-section">
+    <div class="hero-particles" id="hero-particles"></div>
+    <div class="hero-content text-center px-6">
+      <div class="hero-badge">Full-Stack Developer &middot; ICT Engineer &middot; Laravel Artisan</div>
+      <h1 class="hero-title">Dhruv Bhimani</h1>
+      <p class="hero-subtitle">I craft <span class="text-[#2563EB] font-semibold">scalable web applications</span> with PHP, Laravel, and real-time architectures. Currently open for internships &amp; freelance.</p>
+      <div class="flex flex-wrap items-center justify-center gap-4 mt-8">
+        <a href="#work" class="btn-primary">See My Work</a>
+        <a href="#contact" class="btn-secondary">Let's Talk</a>
+        <a href="assets/resume.pdf" class="btn-ghost" download>Download CV &darr;</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-number counter" data-target="3">0</span><span class="text-[#2563EB]">+</span>
+          <span class="hero-stat-label">Years Building</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-number counter" data-target="5">0</span><span class="text-[#2563EB]">+</span>
+          <span class="hero-stat-label">Projects Shipped</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-number counter" data-target="8">0</span><span class="text-[#2563EB]">.09</span>
+          <span class="hero-stat-label">Current SPI</span>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ===== WORK / PROJECTS (Portfolio Grid) ===== -->
+  <section id="work" class="section-padding">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <span class="section-label">Portfolio</span>
+        <h2 class="section-heading">Selected Work</h2>
+        <p class="section-desc">Things I've designed and built from the ground up</p>
+        <div class="filter-bar">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="laravel">Laravel</button>
+          <button class="filter-btn" data-filter="php">PHP</button>
+          <button class="filter-btn" data-filter="fullstack">Full-Stack</button>
+        </div>
+      </div>
+
+      <div class="project-grid" id="project-grid">
+        <div class="project-card reveal" data-category="fullstack php">
+          <div class="project-media">
+            <div class="project-placeholder" style="background: linear-gradient(135deg, #2563EB, #1d4ed8);">
+              <span class="text-white font-['Caveat'] text-5xl">EF</span>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-tags">
+              <span class="tag">PHP 8</span><span class="tag">MySQL</span><span class="tag">AJAX</span><span class="tag">Tailwind</span>
+            </div>
+            <h3 class="project-title">EventFlow Ticketing Engine</h3>
+            <p class="project-desc">Scalable full-stack ticketing platform with a Dynamic Pricing Engine using AJAX for multi-tier ticket costs, secure RBAC admin routes, and PDO-prepared statements for SQL injection prevention.</p>
+            <ul class="project-features">
+              <li>⚡ Dynamic Pricing — no-reload cost calculation</li>
+              <li>🔐 RBAC admin route protection</li>
+              <li>🛡️ PDO prepared statements</li>
+            </ul>
+            <a href="#" class="project-link">View Case Study &rarr;</a>
+          </div>
+        </div>
+
+        <div class="project-card reveal" data-category="laravel fullstack">
+          <div class="project-media">
+            <div class="project-placeholder" style="background: linear-gradient(135deg, #059669, #047857);">
+              <span class="text-white font-['Caveat'] text-5xl">GD</span>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-tags">
+              <span class="tag">Laravel</span><span class="tag">Livewire</span><span class="tag">MySQL</span><span class="tag">Tailwind</span>
+            </div>
+            <h3 class="project-title">Griha Dwar — Real Estate Platform</h3>
+            <p class="project-desc">Comprehensive brokerage app with Livewire-powered real-time search, dynamic filtering, pagination, and multi-role auth (Admin/Agent/Visitor) with middleware route protection.</p>
+            <ul class="project-features">
+              <li>🔍 Real-time Livewire search + dynamic filters</li>
+              <li>🏠 Multi-role auth system</li>
+              <li>🖼️ Optimized image management</li>
+            </ul>
+            <a href="#" class="project-link">View Case Study &rarr;</a>
+          </div>
+        </div>
+
+        <div class="project-card reveal" data-category="laravel fullstack">
+          <div class="project-media">
+            <div class="project-placeholder" style="background: linear-gradient(135deg, #7C3AED, #6D28D9);">
+              <span class="text-white font-['Caveat'] text-5xl">TT</span>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-tags">
+              <span class="tag">Laravel</span><span class="tag">Livewire</span><span class="tag">P2P</span><span class="tag">Payments</span>
+            </div>
+            <h3 class="project-title">TutoRoad — P2P Tutoring Marketplace</h3>
+            <p class="project-desc">Peer-to-peer tutoring platform connecting students with tutors. Features real-time availability, integrated payment processing, session scheduling, and a review/rating system.</p>
+            <ul class="project-features">
+              <li>📅 Real-time session scheduling</li>
+              <li>💳 Integrated payment gateway</li>
+              <li>⭐ Tutor review & rating system</li>
+            </ul>
+            <a href="#" class="project-link">Coming Soon &rarr;</a>
+          </div>
+        </div>
+
+        <div class="project-card reveal" data-category="php fullstack">
+          <div class="project-media">
+            <div class="project-placeholder" style="background: linear-gradient(135deg, #DC2626, #B91C1C);">
+              <span class="text-white font-['Caveat'] text-5xl">IS</span>
+            </div>
+          </div>
+          <div class="project-info">
+            <div class="project-tags">
+              <span class="tag">PHP</span><span class="tag">MySQL</span><span class="tag">OOP</span><span class="tag">jQuery</span>
+            </div>
+            <h3 class="project-title">InventorySync — Stock Management</h3>
+            <p class="project-desc">Inventory management system with real-time stock tracking, automated reorder alerts, supplier management, and detailed analytics dashboards. Built with native PHP OOP architecture.</p>
+            <ul class="project-features">
+              <li>📊 Real-time analytics dashboard</li>
+              <li>🔔 Automated reorder alerts</li>
+              <li>📦 Supplier & purchase management</li>
+            </ul>
+            <a href="#" class="project-link">View Case Study &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <p class="text-center text-sm text-[#71717A] mt-10 font-['JetBrains_Mono'] reveal">// More projects cooking. Currently building TutoRoad. //</p>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="section-padding bg-[#F4F4F5] dark:bg-[#18181B] transition-colors duration-300">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-center">
+        <div class="lg:col-span-2 reveal">
+          <div class="about-photo">
+            <div class="about-photo-placeholder">
+              <span class="text-6xl font-['Caveat'] text-[#2563EB]">DB</span>
+            </div>
+            <div class="about-photo-ring"></div>
+            <div class="about-status">
+              <span class="status-dot"></span>
+              Open to Opportunities
+            </div>
+          </div>
+        </div>
+        <div class="lg:col-span-3 reveal">
+          <span class="section-label">About</span>
+          <h2 class="section-heading">Hey, I'm Dhruv</h2>
+          <div class="about-text">
+            <p>I'm a full-stack web developer and 5th-semester ICT student at Government Engineering College Bhavnagar. I specialize in building real-world applications using the Laravel ecosystem — Livewire, Tailwind CSS, and Alpine.js — with a strong grip on raw PHP and MySQL architecture.</p>
+            <p>I've worked professionally as a Full-Stack Web Development Intern at Strats360 Technolabs LLP, where I shipped production applications, designed complex database schemas, and built dynamic UIs. I care about clean code, scalable architecture, and actually shipping things.</p>
+          </div>
+
+          <div class="about-details">
+            <div class="detail-item">
+              <span class="detail-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+              <span>Bhavnagar, Gujarat, India</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+              <span>GEC Bhavnagar — ICT Engineering</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+              <span>Available for freelance & internships</span>
+            </div>
+          </div>
+
+          <div class="social-row">
+            <a href="https://github.com/DhruvBhimani1" target="_blank" rel="noopener" class="social-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              GitHub
+            </a>
+            <a href="https://linkedin.com/in/dhruv-bhimani" target="_blank" rel="noopener" class="social-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+              LinkedIn
+            </a>
+            <a href="mailto:dhruv22bhimani@gmail.com" class="social-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              Email
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SKILLS (Radar Chart) ===== -->
+  <section id="skills" class="section-padding">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <span class="section-label">Expertise</span>
+        <h2 class="section-heading">Skills & Proficiency</h2>
+        <p class="section-desc">A radar view of my technical capabilities</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="reveal flex justify-center">
+          <canvas id="radar-chart" width="400" height="400" class="radar-canvas"></canvas>
+        </div>
+        <div class="reveal">
+          <div class="skill-bars space-y-5">
+            <div><div class="skill-bar-label"><span>PHP / Laravel</span><span class="counter" data-target="90">0</span><span>%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width: 0%;"></div></div></div>
+            <div><div class="skill-bar-label"><span>MySQL / Database Design</span><span class="counter" data-target="85">0</span><span>%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width: 0%;"></div></div></div>
+            <div><div class="skill-bar-label"><span>Livewire / Alpine.js</span><span class="counter" data-target="80">0</span><span>%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width: 0%;"></div></div></div>
+            <div><div class="skill-bar-label"><span>JavaScript / AJAX</span><span class="counter" data-target="75">0</span><span>%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width: 0%;"></div></div></div>
+            <div><div class="skill-bar-label"><span>Python / C++</span><span class="counter" data-target="60">0</span><span>%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width: 0%;"></div></div></div>
+            <div><div class="skill-bar-label"><span>Git / DevOps Basics</span><span class="counter" data-target="70">0</span><span>%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" style="width: 0%;"></div></div></div>
+          </div>
+
+          <div class="skill-chips-grid mt-8">
+            <span class="chip">PHP</span><span class="chip">Laravel</span><span class="chip">Livewire</span>
+            <span class="chip">MySQL</span><span class="chip">Tailwind</span><span class="chip">Alpine.js</span>
+            <span class="chip">JavaScript</span><span class="chip">AJAX</span><span class="chip">REST APIs</span>
+            <span class="chip">OOP</span><span class="chip">MVC</span><span class="chip">Git</span>
+            <span class="chip">Python</span><span class="chip">C++</span><span class="chip">Bootstrap</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SERVICES ===== -->
+  <section id="services" class="section-padding bg-[#F4F4F5] dark:bg-[#18181B] transition-colors duration-300">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <span class="section-label">What I Do</span>
+        <h2 class="section-heading">Services & Offerings</h2>
+        <p class="section-desc">How I can help bring your ideas to life</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="service-card reveal">
+          <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+          <h3 class="service-title">Full-Stack Development</h3>
+          <p class="service-desc">End-to-end web applications using Laravel, Livewire, and MySQL. From database schema design to pixel-perfect UIs.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
+          <h3 class="service-title">Database Architecture</h3>
+          <p class="service-desc">Complex MySQL schema design, query optimization, and normalized database structures for scalable applications.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
+          <h3 class="service-title">REST API Development</h3>
+          <p class="service-desc">Clean, documented RESTful APIs with proper authentication, rate limiting, and response caching strategies.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3 class="service-title">RBAC & Security</h3>
+          <p class="service-desc">Role-Based Access Control systems, middleware protection, PDO prepared statements, and secure authentication flows.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5"><polyline points="4 17 10 11 13 14 20 7"/><polyline points="14 7 20 7 20 13"/></svg></div>
+          <h3 class="service-title">Real-Time Features</h3>
+          <p class="service-desc">Livewire-powered real-time search, dynamic filtering, live updates, and responsive UIs with Alpine.js interactivity.</p>
+        </div>
+        <div class="service-card reveal">
+          <div class="service-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <h3 class="service-title">Legacy Modernization</h3>
+          <p class="service-desc">Refactor legacy PHP applications into modern Laravel architecture with proper OOP, testing, and deployment pipelines.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS ===== -->
+  <section id="testimonials" class="section-padding">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <span class="section-label">Kind Words</span>
+        <h2 class="section-heading">What People Say</h2>
+        <p class="section-desc">Feedback from collaborators and mentors</p>
+      </div>
+
+      <div class="testimonial-grid">
+        <div class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"Dhruv has a rare ability to take complex requirements and turn them into clean, working code. His work on the RBAC system was production-ready from day one."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: #2563EB;">SM</div>
+            <div><strong>Senior Developer Mentor</strong><span class="block text-sm text-[#71717A]">Strats360 Technolabs LLP</span></div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"The EventFlow project demonstrated Dhruv's deep understanding of PHP OOP and MySQL. The dynamic pricing engine was particularly impressive — clean AJAX implementation."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: #059669;">AK</div>
+            <div><strong>Project Lead</strong><span class="block text-sm text-[#71717A]">Academic Project Review</span></div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"Collaborated with Dhruv on the Griha Dwar platform. His Livewire implementation was seamless — real-time search with zero jank. A true Laravel artisan."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar" style="background: #7C3AED;">RP</div>
+            <div><strong>Team Lead</strong><span class="block text-sm text-[#71717A]">Griha Dwar Project</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOG / THINKING ===== -->
+  <section id="blog" class="section-padding bg-[#F4F4F5] dark:bg-[#18181B] transition-colors duration-300">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <span class="section-label">Thinking Out Loud</span>
+        <h2 class="section-heading">Latest Thoughts</h2>
+        <p class="section-desc">Notes on Laravel, PHP, web dev, and engineering life</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <article class="blog-card reveal">
+          <div class="blog-card-image" style="background: linear-gradient(135deg, #2563EB, #1d4ed8);"></div>
+          <div class="blog-card-body">
+            <span class="blog-date">May 2026</span>
+            <h3 class="blog-title">Why I Chose Laravel Over the Hype Stacks</h3>
+            <p class="blog-excerpt">A honest reflection on choosing PHP and Laravel in a world obsessed with JavaScript frameworks — and why it keeps paying off.</p>
+            <a href="#" class="blog-link">Read More &rarr;</a>
+          </div>
+        </article>
+        <article class="blog-card reveal">
+          <div class="blog-card-image" style="background: linear-gradient(135deg, #059669, #047857);"></div>
+          <div class="blog-card-body">
+            <span class="blog-date">April 2026</span>
+            <h3 class="blog-title">Livewire Changed How I Build UIs</h3>
+            <p class="blog-excerpt">How Livewire's real-time components eliminated my jQuery dependency and made dynamic UIs feel like magic again.</p>
+            <a href="#" class="blog-link">Read More &rarr;</a>
+          </div>
+        </article>
+        <article class="blog-card reveal">
+          <div class="blog-card-image" style="background: linear-gradient(135deg, #7C3AED, #6D28D9);"></div>
+          <div class="blog-card-body">
+            <span class="blog-date">March 2026</span>
+            <h3 class="blog-title">My Internship Survival Kit</h3>
+            <p class="blog-excerpt">Everything I learned shipping production code at Strats360 — from git discipline to debugging database deadlocks.</p>
+            <a href="#" class="blog-link">Read More &rarr;</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="section-padding">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="text-center mb-12 reveal">
+        <span class="section-label">Get in Touch</span>
+        <h2 class="section-heading">Let's Build Something</h2>
+        <p class="section-desc">Available for internships, freelance projects, and collaborations</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12" x-data="contactForm()">
+        <div class="reveal">
+          <form class="contact-form" @submit.prevent="submitForm">
+            <div class="form-row">
+              <input type="text" x-model="form.name" placeholder="Your Name" class="form-input" required>
+            </div>
+            <div class="form-row">
+              <input type="email" x-model="form.email" placeholder="Your Email" class="form-input" required>
+            </div>
+            <div class="form-row">
+              <input type="text" x-model="form.subject" placeholder="Subject" class="form-input" required>
+            </div>
+            <div class="form-row">
+              <textarea x-model="form.message" rows="4" placeholder="Tell me about your project..." class="form-input" required></textarea>
+            </div>
+            <button type="submit" class="btn-primary w-full justify-center"
+                    :disabled="submitting">
+              <template x-if="!submitting && !submitted">
+                <span>Send Message &rarr;</span>
+              </template>
+              <template x-if="submitting">
+                <span class="flex items-center gap-2"><span class="spinner"></span> Sending...</span>
+              </template>
+              <template x-if="submitted && !submitting">
+                <span>✓ Thanks! I'll reply within 24 hours</span>
+              </template>
+            </button>
+          </form>
+        </div>
+
+        <div class="reveal">
+          <div class="contact-info">
+            <h3 class="font-['Caveat'] text-2xl mb-4">Prefer direct reach?</h3>
+            <div class="contact-detail">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Bhavnagar, Gujarat</span>
+            </div>
+            <div class="contact-detail">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <a href="mailto:dhruv22bhimani@gmail.com">dhruv22bhimani@gmail.com</a>
+            </div>
+            <div class="contact-detail">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <a href="tel:+91902398946">+91 90239 98946</a>
+            </div>
+
+            <div class="contact-cta mt-8">
+              <div class="flex gap-3 mb-4">
+                <a href="https://github.com/DhruvBhimani1" target="_blank" rel="noopener" class="contact-social-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+                <a href="https://linkedin.com/in/dhruv-bhimani" target="_blank" rel="noopener" class="contact-social-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+                </a>
+                <a href="mailto:dhruv22bhimani@gmail.com" class="contact-social-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                </a>
+              </div>
+              <a href="assets/resume.pdf" download class="btn-primary inline-flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download Resume
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="footer-grid">
+        <div>
+          <span class="text-2xl font-['Caveat'] font-bold text-[#2563EB]">Dhruv Bhimani</span>
+          <p class="text-sm text-[#71717A] mt-2">Full-Stack Web Developer &middot; ICT Engineer</p>
+          <div class="flex gap-3 mt-4">
+            <a href="https://github.com/DhruvBhimani1" target="_blank" rel="noopener" class="footer-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a>
+            <a href="https://linkedin.com/in/dhruv-bhimani" target="_blank" rel="noopener" class="footer-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+            <a href="mailto:dhruv22bhimani@gmail.com" class="footer-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-heading">Navigate</h4>
+          <a href="#work">Work</a>
+          <a href="#about">About</a>
+          <a href="#services">Services</a>
+          <a href="#blog">Thinking</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <div>
+          <h4 class="footer-heading">Explore</h4>
+          <a href="assets/resume.pdf" download>Resume</a>
+          <a href="https://github.com/DhruvBhimani1" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://linkedin.com/in/dhruv-bhimani" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+        <div>
+          <h4 class="footer-heading">Availability</h4>
+          <p class="text-sm text-[#71717A]">Open for internships & freelance projects.</p>
+          <a href="mailto:dhruv22bhimani@gmail.com" class="text-[#2563EB] text-sm hover:underline">dhruv22bhimani@gmail.com</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Dhruv Bhimani. Crafted with Laravel spirit & a lot of PHP.</p>
+        <button @click="scrollToTop" class="footer-top">↑ Top</button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
