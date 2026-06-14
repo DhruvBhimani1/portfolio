@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const radarCanvas = document.getElementById('radar-chart');
   if (radarCanvas) {
     const ctx = radarCanvas.getContext('2d');
-    const labels = ['PHP', 'MySQL', 'Livewire', 'JavaScript', 'Python', 'Git'];
+    const labels = ['PHP', 'MySQL', 'Livewire', 'JavaScript', 'Flask', 'FastAPI'];
     const values = [90, 85, 80, 75, 60, 70];
     const cx = 200, cy = 200, r = 150;
     const levels = 5;
